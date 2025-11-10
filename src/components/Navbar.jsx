@@ -1,28 +1,48 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { motion } from "framer-motion"
-import { Menu, X, Search, User } from "lucide-react"
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Menu, X, Search, User } from 'lucide-react';
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const navItems = ["Home", "Series", "Popular", "About", "Contact"]
+  const navItems = [
+    { name: 'Home', href: '#home' },
+    { name: 'Series', href: '#series' },
+    { name: 'Popular', href: '#popular' },
+    { name: 'About', href: '#about' },
+    { name: 'Contact', href: '#contact' },
+  ];
+
+  const scrollToSection = (e, href) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
+    if (element) {
+      const offset = 80; // tinggi navbar
+      const elementPosition = element.offsetTop - offset;
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth',
+      });
+      setIsOpen(false); // tutup mobile menu setelah klik
+    }
+  };
 
   return (
     <motion.nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 backdrop-blur-sm shadow-md" : "bg-transparent"
+        isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md' : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -35,19 +55,22 @@ export default function Navbar() {
             <div className="w-10 h-10 bg-gradient-to-br from-rose-600 to-rose-700 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">R</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 hidden sm:inline">Ragatara</span>
+            <span className="text-xl font-bold text-gray-900 hidden sm:inline">
+              Ragatara
+            </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <motion.a
-                key={item}
-                href="#"
-                className="text-gray-700 hover:text-rose-600 font-medium transition-colors text-sm"
+                key={item.name}
+                href={item.href}
+                onClick={(e) => scrollToSection(e, item.href)}
+                className="text-gray-700 hover:text-rose-600 font-medium transition-colors text-sm cursor-pointer"
                 whileHover={{ y: -2 }}
               >
-                {item}
+                {item.name}
               </motion.a>
             ))}
           </div>
@@ -89,17 +112,19 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
           >
             {navItems.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="block px-4 py-2 text-gray-700 hover:text-rose-600 hover:bg-gray-50 font-medium"
+              <motion.a
+                key={item.name}
+                href={item.href}
+                onClick={(e) => scrollToSection(e, item.href)}
+                className="block px-4 py-2 text-gray-700 hover:text-rose-600 hover:bg-gray-50 font-medium cursor-pointer"
+                whileHover={{ x: 5 }}
               >
-                {item}
-              </a>
+                {item.name}
+              </motion.a>
             ))}
           </motion.div>
         )}
       </div>
     </motion.nav>
-  )
+  );
 }
